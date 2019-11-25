@@ -18,8 +18,44 @@ import java.util.ArrayList;
  * @author Yavuz Algun
  */
 public class Search {
-    public static int N = 5;
+    public static int counter = 0;
+    public static int N = 6;
     public static ArrayList<ArrayList<String>> sozcukListesi;
+    public static String[][] kurVeCoz(String[][] Table) throws FileNotFoundException, IOException{
+        sozcukListesi = new ArrayList<>();
+        for(int i =0 ;i<=15;i++){
+            ArrayList<String> newListe =new ArrayList<>();
+            sozcukListesi.add(newListe);
+        }
+        File file = new File("sozluk.txt");
+        BufferedReader reader = null;
+        reader = new BufferedReader(new FileReader(file));
+        String sozcuk = reader.readLine();
+        while(sozcuk !=null){
+            if(sozcuk.length()>15){
+                sozcukListesi.get(0).add(sozcuk);
+            } else {
+                sozcukListesi.get(sozcuk.length()).add(sozcuk);
+            }
+            sozcuk = reader.readLine();
+        }        
+        
+        for(int i = 0;i<N;i++){
+            for(int j = 0;j<N;j++){
+                System.out.print(Table[i][j]+ " ");
+            }
+            System.out.println("");
+        }
+        System.out.println("******************");
+        Table = satirCoz(Table, 0, 0);
+        for(int i = 0;i<N;i++){
+            for(int j = 0;j<N;j++){
+                System.out.print(Table[i][j]+ " ");
+            }
+            System.out.println("");
+        }
+        return Table;
+    }
     public static void main(String[] args) throws FileNotFoundException, IOException{
         String[][] Table = new String[N][N];
         for(int i=0;i<N;i++){
@@ -27,7 +63,10 @@ public class Search {
                 Table[i][j]="-";
             }
         }
+        Table[3][0] ="/";
+        Table[1][1] ="/";
         Table[2][2] ="/";
+        Table[4][5] ="/";
 
         sozcukListesi = new ArrayList<>();
         for(int i =0 ;i<=15;i++){
@@ -129,14 +168,54 @@ public class Search {
         return cumle;
     }
     
+    public static boolean olduMuDuz(String[][] Table,int x,int y){
+        boolean masterBoolean = true;
+        while(true){
+            if(Table[y][x].equals("/")){
+                x +=1;
+                if(x >= N){
+                    y+=1;
+                    x=0;
+                }
+                if(y >= N ){
+                    break;
+                }
+                continue;
+            }
+            boolean isExist=false;
+            String cumle = dikeyCumleDon(Table, y, x);
+            for(int i = 0; i< sozcukListesi.get(cumle.length()).size();i++){
+                if(esitMi(sozcukListesi.get(cumle.length()).get(i), cumle)){
+                    isExist = true;
+                    break;
+                }
+            }
+            if(isExist){
+                int yeniIndis = 1+x;
+                if(yeniIndis >= N && y==(N-1)){
+                    masterBoolean = true;
+                    break;
+                } else if(yeniIndis >= N){
+                    x=0;
+                    y=y+1;
+                } else {
+                    x = yeniIndis;
+                }
+            } else {
+                masterBoolean = false;
+                break;
+            }
+        }
+        return masterBoolean;
+    }
+    
     public static boolean olduMu(String[][] Table,int x,int y){
         int firstNonBlack = 0;
         for(int i=x;i<N;i++){
             if(!Table[i][y].equals("/")){
                 firstNonBlack = i;
                 break;
-            }
-            
+            }   
         }
         boolean isExist=false;
         String cumle = dikeyCumleDon(Table, firstNonBlack, y);
@@ -166,6 +245,9 @@ public class Search {
         boolean esitMi = true;
         if(stringA.length() != stringB.length()){
             return false;
+        }
+        if(stringA.length()==2){
+            return true;
         }
         for(int i = 0;i<stringA.length();i++){
             if(stringA.charAt(i) != stringB.charAt(i) && stringB.charAt(i)!='-'){
@@ -207,6 +289,47 @@ public class Search {
         }
     }
     
+    public static boolean tamOlduMuDongu(String[][] Table, int x, int y){
+        boolean masterBoolean = true;
+        while(true){
+            if(Table[y][x].equals("/")){
+                x +=1;
+                if(x >= N){
+                    y+=1;
+                    x=0;
+                }
+                if(y >= N ){
+                    break;
+                }
+                continue;
+            }
+            boolean isExist=false;
+            String cumle = dikeyCumleDon(Table, y, x);
+            for(int i = 0; i< sozcukListesi.get(cumle.length()).size();i++){
+                if(sozcukListesi.get(cumle.length()).get(i).equals(cumle)||cumle.length()==2){
+                    isExist = true;
+                    break;
+                }
+            }
+            if(isExist){
+                int yeniIndis = 1+x;
+                if(yeniIndis >= N && y==(N-1)){
+                    masterBoolean = true;
+                    break;
+                } else if(yeniIndis >= N){
+                    x=0;
+                    y=y+1;
+                } else {
+                    x = yeniIndis;
+                }
+            } else {
+                masterBoolean = false;
+                break;
+            }
+        }
+        return masterBoolean;
+    }
+    
     public static boolean tamOlduMu(String[][] Table,int x,int y){
         int firstNonBlack = 0;
         for(int i=x;i<N;i++){
@@ -219,7 +342,7 @@ public class Search {
         boolean isExist=false;
         String cumle = dikeyCumleDon(Table, firstNonBlack, y);
         for(int i = 0; i< sozcukListesi.get(cumle.length()).size();i++){
-            if(sozcukListesi.get(cumle.length()).get(i).equals(cumle)){
+            if(sozcukListesi.get(cumle.length()).get(i).equals(cumle)||cumle.length()==2){
                 isExist = true;
                 break;
             }
@@ -250,6 +373,8 @@ public class Search {
     }
     
     public static String[][] satirCoz(String[][] Table,int x,int y){
+        if(counter % 1000 == 0 )
+            System.out.println(counter++);
         int firstNonBlack = 0;
         for(int i=y;i<N;i++){
             if(!Table[x][i].equals("/")){
@@ -265,27 +390,27 @@ public class Search {
                     tempTable[x][firstNonBlack+j]=""+sozcukListesi.get(yatayString.length()).get(i).charAt(j);
                 }
                 if(yataySonuncuGetir(tempTable, x, y)==-1 && x==(N-1)){
-                    if(olduMu(tempTable,0,0)){
+                    if(olduMuDuz(tempTable,0,0)){
                         return tempTable;
                     }
                 }else if(yataySonuncuGetir(tempTable, x, y) == -1){
-                    if(olduMu(tempTable, 0, 0)){
+                    if(olduMuDuz(tempTable, 0, 0)){
                         String[][] newTable = satirCoz(tempTable, x+1, 0);
-                        if(tamOlduMu(newTable,0,0)){
+                        if(tamOlduMuDongu(newTable,0,0)){
                             return newTable;
                         }
                     }
                 }else {
-                    if(olduMu(tempTable, 0, 0)){
+                    if(olduMuDuz(tempTable, 0, 0)){
                         String[][] newTable = satirCoz(tempTable, x, yataySonuncuGetir(tempTable, x, y)+1);
-                        if(tamOlduMu(newTable,0,0)){
+                        if(tamOlduMuDongu(newTable,0,0)){
                             return newTable;
                         }
                     }
                 }
             }
         }
-        return Table;
+        return Table; //tempTable donuyordu
     }
             
     
