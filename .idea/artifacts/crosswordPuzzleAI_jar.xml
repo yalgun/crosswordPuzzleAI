@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="crosswordPuzzleAI:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/crosswordPuzzleAI_jar</output-path>
+    <root id="archive" name="crosswordPuzzleAI.jar">
+      <element id="module-output" name="crosswordPuzzleAI" />
+    </root>
+  </artifact>
+</component>

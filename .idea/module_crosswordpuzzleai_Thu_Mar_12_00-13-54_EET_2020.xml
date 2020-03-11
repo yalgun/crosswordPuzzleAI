@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_crosswordpuzzleai" default="compile.module.crosswordpuzzleai">
+  <dirname property="module.crosswordpuzzleai.basedir" file="${ant.file.module_crosswordpuzzleai}"/>
+  
+  <property name="module.jdk.home.crosswordpuzzleai" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.crosswordpuzzleai" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.crosswordpuzzleai" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.crosswordpuzzleai" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="crosswordpuzzleai.output.dir" value="${module.crosswordpuzzleai.basedir}/../../../../../../production/crosswordPuzzleAI"/>
+  <property name="crosswordpuzzleai.testoutput.dir" value="${module.crosswordpuzzleai.basedir}/../../../../../../test/crosswordPuzzleAI"/>
+  
+  <path id="crosswordpuzzleai.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="crosswordpuzzleai.module.production.classpath">
+    <path refid="${module.jdk.classpath.crosswordpuzzleai}"/>
+  </path>
+  
+  <path id="crosswordpuzzleai.runtime.production.module.classpath">
+    <pathelement location="${crosswordpuzzleai.output.dir}"/>
+  </path>
+  
+  <path id="crosswordpuzzleai.module.classpath">
+    <path refid="${module.jdk.classpath.crosswordpuzzleai}"/>
+    <pathelement location="${crosswordpuzzleai.output.dir}"/>
+  </path>
+  
+  <path id="crosswordpuzzleai.runtime.module.classpath">
+    <pathelement location="${crosswordpuzzleai.testoutput.dir}"/>
+    <pathelement location="${crosswordpuzzleai.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.crosswordpuzzleai">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.crosswordpuzzleai">
+    <patternset refid="excluded.from.module.crosswordpuzzleai"/>
+  </patternset>
+  
+  <path id="crosswordpuzzleai.module.sourcepath">
+    <dirset dir="${module.crosswordpuzzleai.basedir}/../../crosswordPuzzleAI">
+      <include name="src"/>
+      <include name="resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.crosswordpuzzleai" depends="compile.module.crosswordpuzzleai.production,compile.module.crosswordpuzzleai.tests" description="Compile module crosswordPuzzleAI"/>
+  
+  <target name="compile.module.crosswordpuzzleai.production" depends="register.custom.compilers" description="Compile module crosswordPuzzleAI; production classes">
+    <mkdir dir="${crosswordpuzzleai.output.dir}"/>
+    <javac2 destdir="${crosswordpuzzleai.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.crosswordpuzzleai}/javac">
+      <compilerarg line="${compiler.args.crosswordpuzzleai}"/>
+      <bootclasspath refid="crosswordpuzzleai.module.bootclasspath"/>
+      <classpath refid="crosswordpuzzleai.module.production.classpath"/>
+      <src refid="crosswordpuzzleai.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.crosswordpuzzleai"/>
+    </javac2>
+    
+    <copy todir="${crosswordpuzzleai.output.dir}">
+      <fileset dir="${module.crosswordpuzzleai.basedir}/../src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.crosswordpuzzleai.basedir}/../resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.crosswordpuzzleai.tests" depends="register.custom.compilers,compile.module.crosswordpuzzleai.production" description="compile module crosswordPuzzleAI; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.crosswordpuzzleai" description="cleanup module">
+    <delete dir="${crosswordpuzzleai.output.dir}"/>
+    <delete dir="${crosswordpuzzleai.testoutput.dir}"/>
+  </target>
+</project>
