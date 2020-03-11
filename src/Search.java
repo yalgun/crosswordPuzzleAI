@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package crosswordpuzzle;
 
 import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import java.io.BufferedReader;
@@ -27,7 +26,9 @@ public class Search {
             ArrayList<String> newListe =new ArrayList<>();
             sozcukListesi.add(newListe);
         }
-        File file = new File("sozluk.txt");
+        String fileName = "sozluk.txt";
+        ClassLoader classLoader = new Search().getClass().getClassLoader();
+        File file = new File(classLoader.getResource(fileName).getFile());
         BufferedReader reader = null;
         reader = new BufferedReader(new FileReader(file));
         String sozcuk = reader.readLine();
@@ -73,7 +74,9 @@ public class Search {
             ArrayList<String> newListe =new ArrayList<>();
             sozcukListesi.add(newListe);
         }
-        File file = new File("C:\\Users\\Yavuz Algun\\Desktop\\sozluk.txt");
+        String fileName = "sozluk.txt";
+        ClassLoader classLoader = new Search().getClass().getClassLoader();
+        File file = new File(classLoader.getResource(fileName).getFile());
         BufferedReader reader = null;
         reader = new BufferedReader(new FileReader(file));
         String sozcuk = reader.readLine();
